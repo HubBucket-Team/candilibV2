@@ -18,7 +18,7 @@ import {
 } from '../../util'
 
 const messages = []
-
+let transporterPooled
 /**
  * Callback pour indiqué la fin de l'envoi des lots de mails
  * @callback callbackEndSend
@@ -32,7 +32,9 @@ const messages = []
  */
 export const sendMails = async callbackEndSend => {
   try {
-    const transporterPooled = await transporterBuilder(callbackEndSend)
+    if (!transporterPooled) {
+      transporterPooled = await transporterBuilder(callbackEndSend)
+    }
     if (transporterPooled.isIdle() && messages.length) {
       await sendOneMailFromQueue(transporterPooled)
     }
@@ -106,14 +108,17 @@ async function transporterBuilder (callbackEndSend) {
     })
 
     transporterPooled.use('compile', htmlToText())
-
     transporterPooled.on('idle', async function () {
       while (transporterPooled.isIdle() && messages.length) {
         await sendOneMailFromQueue(transporterPooled)
       }
       if (!messages.length) {
         callbackEndSend && callbackEndSend()
-        transporterPooled.close()
+        techLogger.info({
+          section: 'send-mails',
+          action: 'IDLE',
+          description: 'Tous les messages envoyés',
+        })
       }
     })
   } catch (error) {
