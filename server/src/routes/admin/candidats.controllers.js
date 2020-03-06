@@ -58,12 +58,11 @@ export const importCandidats = async (req, res) => {
         description: message,
         nbCandidats: result ? result.length : 0,
       })
-      res.status(200).send({
-        fileName: jsonFile.name,
-        success: true,
-        message,
-        candidats: result,
-      })
+    })
+    res.status(200).send({
+      fileName: jsonFile.name,
+      success: true,
+      message: `Le fichier ${jsonFile.name} est en cours de synchronisation.`,
     })
   } catch (error) {
     appLogger.error({ ...loggerInfo, error })
@@ -199,15 +198,15 @@ export const getCandidats = async (req, res) => {
       loggerInfo.matching = matching
       loggerInfo.startingWith = startingWith
       loggerInfo.endingWith = endingWith
-      appLogger.info(loggerInfo)
+      // appLogger.info(loggerInfo)
 
-      const candidats = await findCandidatsMatching(
+      const result = await findCandidatsMatching(
         matching,
         startingWith,
         endingWith
       )
-
-      res.json(candidats)
+      appLogger.info({ ...loggerInfo, description: result.length + 'trouvés' })
+      res.json(result)
       return
     }
 
