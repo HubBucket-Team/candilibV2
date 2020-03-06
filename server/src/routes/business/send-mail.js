@@ -39,7 +39,7 @@ export const sendMails = async callbackEndSend => {
       await sendOneMailFromQueue(transporterPooled)
     }
   } catch (error) {
-    callbackEndSend && callbackEndSend({ error })
+    callbackEndSend && callbackEndSend({ error, transporterPooled })
   }
 }
 /**
@@ -113,7 +113,7 @@ async function transporterBuilder (callbackEndSend) {
         await sendOneMailFromQueue(transporterPooled)
       }
       if (!messages.length) {
-        callbackEndSend && callbackEndSend()
+        callbackEndSend && callbackEndSend({ transporterPooled })
         techLogger.info({
           section: 'send-mails',
           action: 'IDLE',

@@ -60,6 +60,9 @@ describe('test send mail', () => {
     }
 
     await sendMails(args => {
+      if (args.transporterPooled) {
+        args.transporterPooled.close()
+      }
       expect(countMailsRcpt).toBe(10)
       done()
     })
