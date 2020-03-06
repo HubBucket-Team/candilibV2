@@ -63,7 +63,8 @@ Cypress.Commands.add('archiveCandidate', (candidat) => {
   cy.get('.import-file-action [type=button]')
     .click()
   cy.get('.v-snack--active')
-    .should('contain', 'Le fichier ' + fileName + ' a été synchronisé.')
+    .should('contain', 'Le fichier ' + fileName + ' est en cours de synchronisation.')
+    // .should('contain', 'Le fichier ' + fileName + ' a été synchronisé.')
 })
 
 Cypress.Commands.add('addPlanning', (dates) => {
