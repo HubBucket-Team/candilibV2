@@ -20,7 +20,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo "Europe/Paris" > /etc
         npm config set https-proxy $https_proxy; \
         npm config set no-proxy $no_proxy; \
    fi ; \
-   [ -z "$npm_registry" ] || npm config set registry=$npm_registry
+   [ -z "$npm_registry" ] || npm config set registry=$npm_registry ; \
+   [ -z "$npm_registry" ] || npm config set strict-ssl false
 
 ################################
 # Step 2: "development" target #
@@ -31,6 +32,7 @@ COPY src src/
 COPY babel.config.js package.json package-lock.json ./
 # Install app dependencies
 RUN npm --no-git-tag-version version ${APP_VERSION} ; npm install
+
 ENV NODE_ICU_DATA="/app/node_modules/full-icu"
 
 #CMD ["npm", "start"]
